@@ -4,6 +4,12 @@ on:
   push:
     branches:
       - investigate-failed-check
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    paths-ignore:
+      - '**.md'
+  workflow_dispatch:
 
 jobs:
   stable:
