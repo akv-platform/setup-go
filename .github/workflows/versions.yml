@@ -2,7 +2,8 @@ name: Validate 'setup-go'
 
 on:
   push:
-  pull_request:
+    branches:
+      - investigate-failed-check
 
 jobs:
   stable:
