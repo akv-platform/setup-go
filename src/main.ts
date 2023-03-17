@@ -41,8 +41,14 @@ export async function run() {
 
       const installDirVersion = path.basename(path.dirname(installDir));
 
-      core.addPath(path.join(installDir, 'bin'));
+      const binPath = path.join(installDir, 'bin');
+      core.addPath(binPath);
       core.info('Added go to the path');
+
+      if (os.platform() === 'linux') {
+        cp.execSync(`sudo ln -sf ${path.join(binPath,'go')} /usr/bin/go`)
+        core.info(`Created symlink /usr/bin/go -> ${path.join(binPath,'go')}`)
+      }
 
       const version = installer.makeSemver(installDirVersion);
       // Go versions less than 1.9 require GOROOT to be set

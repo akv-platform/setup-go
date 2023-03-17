@@ -63597,8 +63597,13 @@ function run() {
                 const checkLatest = core.getBooleanInput('check-latest');
                 const installDir = yield installer.getGo(versionSpec, checkLatest, auth, arch);
                 const installDirVersion = path_1.default.basename(path_1.default.dirname(installDir));
-                core.addPath(path_1.default.join(installDir, 'bin'));
+                const binPath = path_1.default.join(installDir, 'bin');
+                core.addPath(binPath);
                 core.info('Added go to the path');
+                if (os_1.default.platform() === 'linux') {
+                    child_process_1.default.execSync(`sudo ln -sf ${path_1.default.join(binPath, 'go')} /usr/bin/go`);
+                    core.info(`Created symlink /usr/bin/go -> ${path_1.default.join(binPath, 'go')}`);
+                }
                 const version = installer.makeSemver(installDirVersion);
                 // Go versions less than 1.9 require GOROOT to be set
                 if (semver.lt(version, '1.9.0')) {
