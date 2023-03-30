@@ -60529,6 +60529,7 @@ exports.supportedPackageManagers = void 0;
 exports.supportedPackageManagers = {
     default: {
         dependencyFilePattern: 'go.sum',
+        isDependencyFileGoSum: true,
         cacheFolderCommandList: ['go env GOMODCACHE', 'go env GOCACHE']
     }
 };

@@ -8,6 +8,7 @@ import {isCacheFeatureAvailable} from './cache-utils';
 import cp from 'child_process';
 import fs from 'fs';
 import os from 'os';
+import {VoidError} from './utils';
 
 export async function run() {
   try {
@@ -74,7 +75,11 @@ export async function run() {
           cacheDependencyPath
         );
       } catch (error) {
-        core.warning(`Restore cache failed: ${error.message}`);
+        if (error instanceof VoidError) {
+          core.info('Restore cache skipped');
+        } else {
+          core.warning(`Restore cache failed: ${error.message}`);
+        }
       }
     }
 

@@ -7,6 +7,7 @@ import fs from 'fs';
 import {State, Outputs} from './constants';
 import {PackageManagerInfo} from './package-managers';
 import {getCacheDirectoryPath, getPackageManagerInfo} from './cache-utils';
+import {VoidError} from './utils';
 
 export const restoreCache = async (
   versionSpec: string,
@@ -54,6 +55,17 @@ const findDependencyFile = (packageManager: PackageManagerInfo) => {
 
   const goSumFileExists = rootContent.includes(dependencyFile);
   if (!goSumFileExists) {
+    if (packageManager.isDependencyFileGoSum) {
+      const goModContent = fs.readFileSync(
+        path.join(workspace, 'go.mod'),
+        'ascii'
+      );
+      const hasRequire = goModContent.match(/^require /);
+      if (!hasRequire) {
+        throw new VoidError();
+      }
+    }
+
     throw new Error(
       `Dependencies file is not found in ${workspace}. Supported file pattern: ${dependencyFile}`
     );

@@ -63032,6 +63032,7 @@ const path_1 = __importDefault(__nccwpck_require__(1017));
 const fs_1 = __importDefault(__nccwpck_require__(7147));
 const constants_1 = __nccwpck_require__(9042);
 const cache_utils_1 = __nccwpck_require__(1678);
+const utils_1 = __nccwpck_require__(1314);
 const restoreCache = (versionSpec, packageManager, cacheDependencyPath) => __awaiter(void 0, void 0, void 0, function* () {
     const packageManagerInfo = yield cache_utils_1.getPackageManagerInfo(packageManager);
     const platform = process.env.RUNNER_OS;
@@ -63063,6 +63064,13 @@ const findDependencyFile = (packageManager) => {
     const rootContent = fs_1.default.readdirSync(workspace);
     const goSumFileExists = rootContent.includes(dependencyFile);
     if (!goSumFileExists) {
+        if (packageManager.isDependencyFileGoSum) {
+            const goModContent = fs_1.default.readFileSync(path_1.default.join(workspace, 'go.mod'), 'ascii');
+            const hasRequire = goModContent.match(/^require /);
+            if (!hasRequire) {
+                throw new utils_1.VoidError();
+            }
+        }
         throw new Error(`Dependencies file is not found in ${workspace}. Supported file pattern: ${dependencyFile}`);
     }
     return path_1.default.join(workspace, dependencyFile);
@@ -63577,6 +63585,7 @@ const cache_utils_1 = __nccwpck_require__(1678);
 const child_process_1 = __importDefault(__nccwpck_require__(2081));
 const fs_1 = __importDefault(__nccwpck_require__(7147));
 const os_1 = __importDefault(__nccwpck_require__(2037));
+const utils_1 = __nccwpck_require__(1314);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -63621,7 +63630,12 @@ function run() {
                     yield cache_restore_1.restoreCache(parseGoVersion(goVersion), packageManager, cacheDependencyPath);
                 }
                 catch (error) {
-                    core.warning(`Restore cache failed: ${error.message}`);
+                    if (error instanceof utils_1.VoidError) {
+                        core.info('Restore cache skipped');
+                    }
+                    else {
+                        core.warning(`Restore cache failed: ${error.message}`);
+                    }
                 }
             }
             // add problem matchers
@@ -63710,6 +63724,7 @@ exports.supportedPackageManagers = void 0;
 exports.supportedPackageManagers = {
     default: {
         dependencyFilePattern: 'go.sum',
+        isDependencyFileGoSum: true,
         cacheFolderCommandList: ['go env GOMODCACHE', 'go env GOCACHE']
     }
 };
@@ -63771,12 +63786,18 @@ exports.getArch = getArch;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.StableReleaseAlias = void 0;
+exports.VoidError = exports.StableReleaseAlias = void 0;
 var StableReleaseAlias;
 (function (StableReleaseAlias) {
     StableReleaseAlias["Stable"] = "stable";
     StableReleaseAlias["OldStable"] = "oldstable";
 })(StableReleaseAlias = exports.StableReleaseAlias || (exports.StableReleaseAlias = {}));
+class VoidError extends Error {
+    constructor() {
+        super("");
+    }
+}
+exports.VoidError = VoidError;
 
 
 /***/ }),

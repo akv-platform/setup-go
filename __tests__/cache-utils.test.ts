@@ -48,6 +48,7 @@ describe('getPackageManagerInfo', () => {
     const packageManagerName = 'default';
     const expectedResult = {
       dependencyFilePattern: 'go.sum',
+      isDependencyFileGoSum: true,
       cacheFolderCommandList: ['go env GOMODCACHE', 'go env GOCACHE']
     };
 
