@@ -200,7 +200,7 @@ async function cacheWindowsDir(
     defaultToolCacheRoot
   );
   fs.mkdirSync(path.dirname(defaultToolCacheDir), {recursive: true});
-  fs.symlinkSync(actualToolCacheDir, defaultToolCacheDir, 'junction');
+  fs.symlinkSync(actualToolCacheDir, defaultToolCacheDir, 'dir');
   core.info(`Created link ${defaultToolCacheDir} => ${actualToolCacheDir}`);
 
   // make outer code to continue using toolcache as if it were installed on c:

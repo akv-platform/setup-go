@@ -61512,7 +61512,7 @@ function cacheWindowsDir(extPath, tool, version, arch) {
         // create a link from c: to d:
         const defaultToolCacheDir = actualToolCacheDir.replace(actualToolCacheRoot, defaultToolCacheRoot);
         fs_1.default.mkdirSync(path.dirname(defaultToolCacheDir), { recursive: true });
-        fs_1.default.symlinkSync(actualToolCacheDir, defaultToolCacheDir, 'junction');
+        fs_1.default.symlinkSync(actualToolCacheDir, defaultToolCacheDir, 'dir');
         core.info(`Created link ${defaultToolCacheDir} => ${actualToolCacheDir}`);
         // make outer code to continue using toolcache as if it were installed on c:
         // restore toolcache root to default drive c:
